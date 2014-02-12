@@ -1,4 +1,5 @@
 require 'spec_helper'
+require "addressable/template"
 
 describe GaExampleGem::Client do
 	before do
@@ -69,6 +70,62 @@ describe GaExampleGem::Client do
 
       expect(comics).to be_an Array
       expect(comics.count).to eq 203
+    end
+  end
+
+  describe '#get_comics' do
+    before do
+      stub_request(:get, 'http://xkcd-unofficial-api.herokuapp.com/xkcd?month=3').
+        to_return(body: fixture('unauth_month_3.json'))
+
+      stub_request(:get, 'http://xkcd-unofficial-api.herokuapp.com/xkcd?day=1').
+        to_return(body: fixture('unauth_day_1.json'))
+
+      stub_request(:get, 'http://xkcd-unofficial-api.herokuapp.com/xkcd?year=2007&month=3').
+        to_return(body: fixture('unauth_year_2007_month_3.json'))
+
+      stub_request(:get, 'http://xkcd-unofficial-api.herokuapp.com/xkcd?year=2007&month=3&api_key=foobar').
+        to_return(body: fixture('auth_year_2007_month_3.json'))
+    end
+
+    it 'returns 3 comics from a month' do
+      comics = @client.get_comics(month: 3)
+
+      expect(a_request(:get, 'http://xkcd-unofficial-api.herokuapp.com/xkcd?month=3')).to have_been_made
+
+      expect(comics[2]["title"]).to eq "Classhole"
+      expect(comics.count).to eq 3
+      expect(comics).to be_an Array
+    end
+
+    it 'returns 3 comics for day' do
+      comics = @client.get_comics(day: 1)
+
+      expect(a_request(:get, 'http://xkcd-unofficial-api.herokuapp.com/xkcd?day=1')).to have_been_made
+
+      expect(comics[2]["title"]).to eq "Island (sketch)"
+      expect(comics.count).to eq 3
+      expect(comics).to be_an Array
+    end
+
+    it 'returns 3 comics for a day and month' do
+      comics = @client.get_comics(year: 2007, month: 3)
+
+      expect(a_request(:get, 'http://xkcd-unofficial-api.herokuapp.com/xkcd?year=2007&month=3')).to have_been_made
+
+      expect(comics[2]["title"]).to eq "Chess Enlightenment"
+      expect(comics.count).to eq 3
+      expect(comics).to be_an Array
+    end
+
+    it 'returns all comics for a day and month for auth user' do
+      comics = @authenticated_client.get_comics(year: 2007, month: 3)
+
+      expect(a_request(:get, 'http://xkcd-unofficial-api.herokuapp.com/xkcd?year=2007&month=3&api_key=foobar')).to have_been_made
+
+      expect(comics[7]["title"]).to eq "Keyboards are Disgusting"
+      expect(comics.count).to eq 13
+      expect(comics).to be_an Array
     end
   end
 end

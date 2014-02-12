@@ -7,6 +7,7 @@ source "http://rubygems.org"
 # Include everything needed to run rake, tests, features, etc.
 
 gem 'httparty'
+gem 'addressable'
 
 group :development do
   gem "shoulda", ">= 0"

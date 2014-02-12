@@ -110,6 +110,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  addressable
   bundler (~> 1.0)
   coveralls
   httparty
