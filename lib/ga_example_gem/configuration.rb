@@ -1,6 +1,6 @@
 module GaExampleGem
 
-  # This is the configuration module that 
+  # This is the configuration module that
   # allows us to setup an api_key
   # using a pattern close to the Twitter or MtGox gem
 	module Configuration
@@ -18,10 +18,10 @@ module GaExampleGem
       yield self
     end
 
-    # This reset our API key and is called when the 
+    # This reset our API key and is called when the
     # client is initialized
     def reset
-      self.api_key = nil
+      self.api_key = ''
       self
     end
 	end

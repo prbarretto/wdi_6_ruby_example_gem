@@ -25,7 +25,11 @@ module GaExampleGem
   	end
 
   	def get_xkcds_from_year(year)
-  		JSON.parse HTTParty.get("http://xkcd-unofficial-api.herokuapp.com/xkcd?year=#{year}")
+  		if !self.api_key.empty?
+  			JSON.parse HTTParty.get("http://xkcd-unofficial-api.herokuapp.com/xkcd?year=#{year}&api_key=#{api_key}")
+  		else
+  			JSON.parse HTTParty.get("http://xkcd-unofficial-api.herokuapp.com/xkcd?year=#{year}")
+  		end
   	end
 	end
 end
